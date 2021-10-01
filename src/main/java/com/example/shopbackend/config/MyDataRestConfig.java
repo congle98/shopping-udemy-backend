@@ -1,7 +1,9 @@
 package com.example.shopbackend.config;
 
+import com.example.shopbackend.entity.Country;
 import com.example.shopbackend.entity.Product;
 import com.example.shopbackend.entity.ProductCategory;
+import com.example.shopbackend.entity.State;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
@@ -31,14 +33,17 @@ public class MyDataRestConfig implements RepositoryRestConfigurer {
 
         //Config tắt thêm sửa xóa
         HttpMethod[] theUnsupportedActions = {HttpMethod.POST,HttpMethod.DELETE,HttpMethod.PUT};
-        config.getExposureConfiguration().forDomainType(Product.class)
-                .withItemExposure(((metdata, httpMethods) -> httpMethods.disable(theUnsupportedActions)))
-                .withCollectionExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupportedActions));
-        config.getExposureConfiguration().forDomainType(ProductCategory.class)
-                .withItemExposure(((metdata, httpMethods) -> httpMethods.disable(theUnsupportedActions)))
-                .withCollectionExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupportedActions));
-
+        disableHttpMethod(Product.class,config,theUnsupportedActions);
+        disableHttpMethod(Country.class,config,theUnsupportedActions);
+        disableHttpMethod(ProductCategory.class,config,theUnsupportedActions);
+        disableHttpMethod(State.class,config,theUnsupportedActions);
         exposeIds(config);
+    }
+
+    private void disableHttpMethod(Class cl,RepositoryRestConfiguration config,HttpMethod[] theUnsupportedActions){
+        config.getExposureConfiguration().forDomainType(cl)
+                .withItemExposure(((metdata, httpMethods) -> httpMethods.disable(theUnsupportedActions)))
+                .withCollectionExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupportedActions));
     }
 
     private void  exposeIds(RepositoryRestConfiguration config){
