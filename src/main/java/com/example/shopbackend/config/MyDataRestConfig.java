@@ -1,10 +1,8 @@
 package com.example.shopbackend.config;
 
-import com.example.shopbackend.entity.Country;
-import com.example.shopbackend.entity.Product;
-import com.example.shopbackend.entity.ProductCategory;
-import com.example.shopbackend.entity.State;
+import com.example.shopbackend.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer;
@@ -22,22 +20,28 @@ import java.util.Set;
 public class MyDataRestConfig implements RepositoryRestConfigurer {
     private EntityManager entityManager;
 
+    @Value("${allowed.origins}")
+    private String[] theAllowedOrigins;
+
     @Autowired
     public  MyDataRestConfig(EntityManager theEntityManager){
         entityManager = theEntityManager;
 
     }
 
+
     @Override
     public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config, CorsRegistry cors) {
 
         //Config tắt thêm sửa xóa
-        HttpMethod[] theUnsupportedActions = {HttpMethod.POST,HttpMethod.DELETE,HttpMethod.PUT};
+        HttpMethod[] theUnsupportedActions = {HttpMethod.POST,HttpMethod.DELETE,HttpMethod.PUT,HttpMethod.PATCH};
         disableHttpMethod(Product.class,config,theUnsupportedActions);
         disableHttpMethod(Country.class,config,theUnsupportedActions);
         disableHttpMethod(ProductCategory.class,config,theUnsupportedActions);
         disableHttpMethod(State.class,config,theUnsupportedActions);
+        disableHttpMethod(Order.class,config,theUnsupportedActions);
         exposeIds(config);
+        cors.addMapping(config.getBasePath()+"/**").allowedOrigins(theAllowedOrigins);
     }
 
     private void disableHttpMethod(Class cl,RepositoryRestConfiguration config,HttpMethod[] theUnsupportedActions){
