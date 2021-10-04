@@ -1,9 +1,11 @@
 package com.example.shopbackend.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 public class PurchaseResponse {
     
-    private String orderTrackingNumber;
+    private final String orderTrackingNumber;
 }
